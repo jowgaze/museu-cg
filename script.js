@@ -13,9 +13,10 @@ let colorLoc, useTextureLoc, texture, uTexture;
 let textureWall, textureFloor, textureRoof, texturePedestal, texturePicture;
 
 // Carregar texturas
+const BASE_PATH = "/museu-cg";
 function loadTexture(url, texObj) {
   const image = new Image();
-  image.src = url;
+  image.src = BASE_PATH + url;
   image.onload = function () {
     gl.bindTexture(gl.TEXTURE_2D, texObj);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
@@ -79,19 +80,19 @@ window.onload = function init() {
   gl.enableVertexAttribArray(textureLoc);
 
   textureWall = gl.createTexture();
-  loadTexture("./texture/wall.jpg", textureWall);
+  loadTexture("/texture/wall.jpg", textureWall);
 
   textureFloor = gl.createTexture();
-  loadTexture("./texture/floor.jpg", textureFloor);
+  loadTexture("/texture/floor.jpg", textureFloor);
 
   textureRoof = gl.createTexture();
-  loadTexture("./texture/roof.jpg", textureRoof);
+  loadTexture("/texture/roof.jpg", textureRoof);
 
   texturePedestal = gl.createTexture();
-  loadTexture("./texture/pedestal.jpg", texturePedestal);
+  loadTexture("/texture/pedestal.jpg", texturePedestal);
 
   texturePicture = gl.createTexture();
-  loadTexture("./texture/picture.jpg", texturePicture);
+  loadTexture("/texture/picture.jpg", texturePicture);
 
   // Buffers de índices
   iBufferWall = gl.createBuffer();
