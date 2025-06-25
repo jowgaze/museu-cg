@@ -6,11 +6,12 @@ let modelViewMatrix, projectionMatrix;
 let modelViewMatrixLoc, projectionMatrixLoc;
 
 // Buffers
-let iBufferWall, iBufferFloor, iBufferRoof, iBufferPedestal, iBufferPicture;
+let offset = 0;
+let iBufferWall, iBufferFloor, iBufferRoof, iBufferPedestal, iBufferPictureC, iBufferPictureL, iBufferPictureR;
 
 // Cor e Textura
 let colorLoc, useTextureLoc, texture, uTexture;
-let textureWall, textureFloor, textureRoof, texturePedestal, texturePicture;
+let textureWall, textureFloor, textureRoof, texturePedestal, texturePictureC, texturePictureL, texturePictureR;
 
 // Carregar texturas
 const BASE_PATH = "/museu-cg";
@@ -28,13 +29,26 @@ function loadTexture(url, texObj) {
 }
 
 // Modelagem
-let divideSierpinski = 1;
+let divideSierpinski = 9;
 let sierpinski = getSierpinski(4);
 let structure = getStructure();
 let pedestal = getPedestal();
-let picture = getPicture();
-let allVertices = structure.concat(pedestal).concat(picture).concat(sierpinski);
-let texCoords = getTextureVertices(10).concat(getTexturePedestal(1)).concat(getTexturePicture(1));
+let pictureC = getPicture(0);
+let pictureL = getPicture(2);
+let pictureR = getPicture(-2);
+
+let allVertices = structure
+  .concat(pedestal)
+  .concat(pictureC)
+  .concat(pictureL)
+  .concat(pictureR)
+  .concat(sierpinski);
+
+let texCoords = getTextureStructure(10)
+  .concat(getTexturePedestal())
+  .concat(getTexturePicture())
+  .concat(getTexturePicture())
+  .concat(getTexturePicture());
 
 // Camera
 let eye = vec3(0, 2, 1.75);
@@ -91,8 +105,14 @@ window.onload = function init() {
   texturePedestal = gl.createTexture();
   loadTexture("/texture/pedestal.jpg", texturePedestal);
 
-  texturePicture = gl.createTexture();
-  loadTexture("/texture/picture.jpg", texturePicture);
+  texturePictureC = gl.createTexture();
+  loadTexture("/texture/pictureC.jpg", texturePictureC);
+
+  texturePictureL = gl.createTexture();
+  loadTexture("/texture/pictureL.jpg", texturePictureL);
+
+  texturePictureR = gl.createTexture();
+  loadTexture("/texture/pictureR.jpg", texturePictureR);
 
   // Buffers de índices
   iBufferWall = gl.createBuffer();
@@ -106,15 +126,28 @@ window.onload = function init() {
   iBufferRoof = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBufferRoof);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(getIndicesRoof()), gl.STATIC_DRAW);
+  offset = structure.length;
 
   iBufferPedestal = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBufferPedestal);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(getIndicesPedestal(structure.length)), gl.STATIC_DRAW);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(getIndicesPedestal(offset)), gl.STATIC_DRAW);
+  offset += pedestal.length;
 
-  iBufferPicture = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBufferPicture);
-  let i = structure.concat(pedestal).length;
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(getIndicesPicture(i)), gl.STATIC_DRAW);
+  iBufferPictureC = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBufferPictureC);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(getIndicesPicture(offset)), gl.STATIC_DRAW);
+  offset += pictureC.length;
+
+  iBufferPictureL = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBufferPictureL);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(getIndicesPicture(offset)), gl.STATIC_DRAW);
+  offset += pictureL.length;
+
+  iBufferPictureR = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBufferPictureR);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(getIndicesPicture(offset)), gl.STATIC_DRAW);
+  offset += pictureR.length;
+
 
   // Uniformes
   uTexture = gl.getUniformLocation(program, "uTexture");
@@ -201,19 +234,34 @@ function render() {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBufferPedestal);
   gl.drawElements(gl.TRIANGLE_STRIP, getIndicesPedestal().length, gl.UNSIGNED_BYTE, 0);
 
-  // Picture
+  // Picture C
   gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_2D, texturePicture);
+  gl.bindTexture(gl.TEXTURE_2D, texturePictureC);
   gl.uniform1i(uTexture, 0);
   gl.uniform1i(useTextureLoc, true);
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBufferPicture);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBufferPictureC);
+  gl.drawElements(gl.TRIANGLE_STRIP, getIndicesPicture().length, gl.UNSIGNED_BYTE, 0);
+
+  // Picture L
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, texturePictureL);
+  gl.uniform1i(uTexture, 0);
+  gl.uniform1i(useTextureLoc, true);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBufferPictureL);
+  gl.drawElements(gl.TRIANGLE_STRIP, getIndicesPicture().length, gl.UNSIGNED_BYTE, 0);
+
+  // Picture R
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, texturePictureR);
+  gl.uniform1i(uTexture, 0);
+  gl.uniform1i(useTextureLoc, true);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBufferPictureR);
   gl.drawElements(gl.TRIANGLE_STRIP, getIndicesPicture().length, gl.UNSIGNED_BYTE, 0);
 
   // Triângulo de Sierpinski
   gl.uniform1i(useTextureLoc, false);
   gl.uniform4fv(colorLoc, [0, 0, 0, 1]);
-  let indicesSierpinski = structure.concat(pedestal).concat(picture).length;
-  gl.drawArrays(gl.TRIANGLES, indicesSierpinski, sierpinski.length / divideSierpinski);
+  gl.drawArrays(gl.TRIANGLES, offset, sierpinski.length / divideSierpinski);
 
   requestAnimationFrame(render);
 }

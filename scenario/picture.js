@@ -1,9 +1,9 @@
-function getPicture() {
+function getPicture(x) {
     return [
-        vec4(0.5, 1.5, -7.9, 1.0),
-        vec4(0.5, 3.5, -7.9, 1.0),
-        vec4(-0.5, 3.5, -7.9, 1.0),
-        vec4(-0.5, 1.5, -7.9, 1.0),
+        vec4(0.5 - x, 1.5, -7.9, 1.0),
+        vec4(0.5 - x, 3.5, -7.9, 1.0),
+        vec4(-0.5 - x, 3.5, -7.9, 1.0),
+        vec4(-0.5 - x, 1.5, -7.9, 1.0),
     ];
 }
 
@@ -14,8 +14,8 @@ function getIndicesPicture(x) {
     ].map(i => i + x)
 }
 
-function getTexturePicture(repeat) {
+function getTexturePicture() {
     return [
-        vec2(0, repeat), vec2(0, 0), vec2(repeat, 0), vec2(repeat, repeat)
+        vec2(0, 1), vec2(0, 0), vec2(1, 0), vec2(1, 1)
     ]
 }

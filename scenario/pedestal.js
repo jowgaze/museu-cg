@@ -20,9 +20,9 @@ function getIndicesPedestal(x) {
     ].map(i => i + x)
 }
 
-function getTexturePedestal(repeat) {
+function getTexturePedestal() {
     return [
-        vec2(0, 0), vec2(repeat, 0), vec2(0, repeat), vec2(repeat, repeat),
-        vec2(0, 0), vec2(repeat, 0), vec2(0, repeat), vec2(repeat, repeat)
+        vec2(0, 0), vec2(1, 0), vec2(0, 1), vec2(1, 1),
+        vec2(0, 0), vec2(1, 0), vec2(0, 1), vec2(1, 1)
     ]
 }

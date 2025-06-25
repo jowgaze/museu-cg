@@ -44,7 +44,7 @@ function getIndicesRoof() {
     ];
 }
 
-function getTextureVertices(x){
+function getTextureStructure(x){
     return [
         vec2(x, 0), vec2(x, x), vec2(0, 0), vec2(0, x),
         vec2(x, 0), vec2(x, x), vec2(0, 0), vec2(0, x),
